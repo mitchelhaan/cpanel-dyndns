@@ -21,7 +21,7 @@ impl Response {
 
     pub fn set_status_code(&mut self, status_code: u16) {
         if self.status_code == 0 {
-            let (status_code, status_text) = Response::status_code_text(status_code);
+            let (status_code, status_text) = status_code_text(status_code);
             self.headers.push(format!("Status: {} {}", status_code, status_text));
             self.status_code = status_code;
         } else {
@@ -40,24 +40,40 @@ impl Response {
         }
     }
 
-    fn status_code_text(status_code: u16) -> (u16, &'static str) {
-        let mut return_status_code = status_code;
-        let status_text = match status_code {
-            200 => "OK",
-            201 => "Created",
-            202 => "Accepted",
-            204 => "No Content",
-            304 => "Not Modified",
-            400 => "Bad Request",
-            401 => "Unauthorized",
-            403 => "Forbidden",
-            404 => "Not Found",
-            405 => "Method Not Allowed",
-            501 => "Not Implemented",
-            503 => "Service Unavailable",
-            _   => {return_status_code = 500; "Internal Server Error"},
-        };
+}
 
-        (return_status_code, status_text)
+fn status_code_text(status_code: u16) -> (u16, &'static str) {
+    let mut return_status_code = status_code;
+    let status_text = match status_code {
+        200 => "OK",
+        201 => "Created",
+        202 => "Accepted",
+        204 => "No Content",
+        304 => "Not Modified",
+        400 => "Bad Request",
+        401 => "Unauthorized",
+        403 => "Forbidden",
+        404 => "Not Found",
+        405 => "Method Not Allowed",
+        501 => "Not Implemented",
+        503 => "Service Unavailable",
+        _   => {return_status_code = 500; "Internal Server Error"},
+    };
+
+    (return_status_code, status_text)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn valid_status_code() {
+        assert_eq!((200, "OK"), status_code_text(200));
+    }
+
+    #[test]
+    fn invalid_status_code() {
+        assert_eq!((500, "Internal Server Error"), status_code_text(1000));
     }
 }
