@@ -1,0 +1,10 @@
+[package]
+name = "cpanel-dyndns"
+version = "0.1.0"
+authors = ["Mitchel Haan <mitchel@mhstud.io>"]
+
+[dependencies]
+chrono = "0.4"
+curl = "0.4"
+regex = "0.2"
+rusqlite = { version = "0.13", features = ["bundled"] }
