@@ -16,8 +16,9 @@ fn main() {
     response.add_header("Content-Type: text/plain");
 
     let request = match Request::parse() {
-        Some(val) => val,
-        None => {
+        Ok(val) => val,
+        Err(_err) => {
+            eprintln!("Couldn't parse request: {}", _err);
             response.set_status_code(500);
             response.send();
             return

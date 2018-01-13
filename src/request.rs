@@ -26,16 +26,13 @@ pub struct Request {
 }
 
 impl Request {
-    pub fn parse() -> Option<Request> {
+    pub fn parse() -> Result<Request, &'static str> {
 
         /***** Retrieve CGI variables from the environment *****/
 
         let remote_addr = match env::var("REMOTE_ADDR") {
             Ok(val) => val,
-            Err(_err) => {
-                eprintln!("Failed to retrieve REMOTE_ADDR: {}", _err);
-                return None
-            },
+            Err(_err) => return Err("Failed to retrieve REMOTE_ADDR"),
         };
 
         let request_method = match env::var("REQUEST_METHOD") {
@@ -44,21 +41,15 @@ impl Request {
                 "POST" => RequestMethod::Post,
                 &_     => RequestMethod::Invalid,
             },
-            Err(_err) => {
-                eprintln!("Failed to retrieve REQUEST_METHOD: {}", _err);
-                return None
-            },
+            Err(_err) => return Err("Failed to retrieve REQUEST_METHOD"),
         };
 
         let query_str = match env::var("QUERY_STRING") {
             Ok(val) => val,
-            Err(_err) => {
-                eprintln!("Failed to retrieve QUERY_STRING: {}", _err);
-                return None
-            },
+            Err(_err) => return Err("Failed to retrieve QUERY_STRING"),
         };
 
-        Some(Request {
+        Ok(Request {
             remote_address: remote_addr,
             method: request_method,
             host: parse_host_from_query_string(&query_str),
